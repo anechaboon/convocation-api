@@ -5,7 +5,16 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const users = await User.find();
+    const q = req.query.q || ''; 
+    const query = {
+      $or: [
+        { firstName: { $regex: new RegExp(q, 'i') } },
+        { lastName: { $regex: new RegExp(q, 'i') } },  
+        { phoneNumber: { $regex: new RegExp(q, 'i') } }  
+      ]
+    };
+    
+    const users = await User.find(query);
     return res.json(users);
   } catch (err) {
     return res.status(500).json({ message: err.message });

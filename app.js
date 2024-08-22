@@ -20,7 +20,9 @@ mongoose.connect(mongoURI)
 
 // Import routes
 const userRoutes = require('./routes/user');
+const seatRoutes = require('./routes/seat');
 app.use('/users', userRoutes);
+app.use('/seat', seatRoutes);
 
 // เริ่มเซิร์ฟเวอร์
 const port = process.env.PORT || 3000;
