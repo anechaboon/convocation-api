@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 
 // สร้าง Express app
@@ -7,7 +8,7 @@ const app = express();
 
 // ใช้ middleware สำหรับจัดการ JSON
 app.use(express.json());
-
+app.use(cors());
 
 // URL สำหรับเชื่อมต่อกับ MongoDB
 const mongoURI = `mongodb://localhost:27017/${process.env.DB_NAME}`;
