@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/User');
+const Convocation = require('../models/Convocation');
 
 const router = express.Router();
 
@@ -35,6 +36,18 @@ router.post('/register', async (req, res) => {
 
       const newUser = await user.save();
       if(newUser){
+        console.log(`🚀 log:req.body.date`,req.body.date )
+        await Convocation.updateOne(
+          { 
+            status: 1,
+            date: req.body.date,
+          },
+          {
+            $inc: { 
+              registered: 1       
+            }
+          }
+        );
         return res.status(201).json(newUser); 
       }
       return res.status(200).json(newUser); 

@@ -1,12 +1,12 @@
 const express = require('express');
-const Seat = require('../models/Seat');
+const Convocation = require('../models/Convocation');
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const seats = await Seat.findOne();
-    return res.json(seats);
+    const convocation = await Convocation.findOne();
+    return res.json(convocation);
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -14,24 +14,27 @@ router.get('/', async (req, res) => {
 
 router.post('/update', async (req, res) => {
   try {
-    const result = await Seat.find();
+    const result = await Convocation.find();
 
     if(!result.length){
-      const seat = new Seat({
+      const convocation = new Convocation({
         endColumn: req.body.endColumn,
         endRow: req.body.endRow,
         date: req.body.date,
+        reserved: req.body.reserved,
+        allSeat: req.body.allSeat,
         seatAvailable: req.body.seatAvailable,
+        registered: req.body.registered,
       });
 
-      const newSeat = await seat.save();
-      if(newSeat){
-        return res.status(201).json(newSeat); 
+      const newConvocation = await convocation.save();
+      if(newConvocation){
+        return res.status(201).json(newConvocation); 
       }
-      return res.status(200).json(newSeat); 
+      return res.status(200).json(newConvocation); 
 
     }else{
-      const result = await Seat.updateOne(
+      const result = await Convocation.updateOne(
         { 
           status: 1,
           date: req.body.date,
@@ -39,7 +42,10 @@ router.post('/update', async (req, res) => {
         {
           endColumn: req.body.endColumn,
           endRow: req.body.endRow,
+          reserved: req.body.reserved,
+          allSeat: req.body.allSeat,
           seatAvailable: req.body.seatAvailable,
+          registered: req.body.registered,
         }
       );
 
