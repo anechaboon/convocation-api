@@ -7,13 +7,21 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const q = req.query.q || ''; 
-    const query = {
+    let query = {
       $or: [
         { firstName: { $regex: new RegExp(q, 'i') } },
         { lastName: { $regex: new RegExp(q, 'i') } },  
         { phoneNumber: { $regex: new RegExp(q, 'i') } }  
       ]
     };
+    if (req.query.nophone == 'yes') {
+      query = {
+        $or: [
+          { firstName: { $regex: new RegExp(q, 'i') } },
+          { lastName: { $regex: new RegExp(q, 'i') } },  
+        ]
+      };
+    }
     
     const spectators = await Spectator.find(query);
     return res.json(spectators);
@@ -61,7 +69,7 @@ router.post('/register', async (req, res) => {
     }
     
     return res.status(200).json({
-      message: "seat not available"
+      message: "Fully Reserved"
     });
 
   } catch (err) {

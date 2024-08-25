@@ -1,10 +1,11 @@
 const express = require('express');
 const Reserved = require('../models/Reserved');
-const User = require('../models/Spectator');
+const Spectator = require('../models/Spectator');
 const Convocation = require('../models/Convocation');
 
-
 const router = express.Router();
+const secretKey = process.env.SECRET_KEY; 
+const authenticateToken = require('./authMiddleware'); // นำเข้า authenticateToken
 
 router.get('/', async (req, res) => {
   try {
@@ -20,7 +21,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const reserved = new Reserved({
         // date: req.body.date,
@@ -43,26 +44,21 @@ router.post('/', async (req, res) => {
           },
         );
 
-        const updatedUser = await User.findByIdAndUpdate(
+        const updatedSpectator = await Spectator.findByIdAndUpdate(
             req.body.reservedID,         
             { reservedSeat: true},     
         );
     
-        if (!updatedUser) {
-          return res.status(404).json({ message: 'User not found' });
+        if (!updatedSpectator) {
+          return res.status(404).json({ message: 'Spectator not found' });
         }
 
  
 
-        const [users, reserved, convocation] = await Promise.all([ User.find({ status: 1 }), Reserved.find({ status: 1 }), Convocation.findOne({ status: 1 })]);
+        const [spectators, reserved, convocation] = await Promise.all([ Spectator.find({ status: 1 }), Reserved.find({ status: 1 }), Convocation.findOne({ status: 1 })]);
         
-        console.log(`🚀 log:add reserve`,{
-          users: users,
-          reserved: reserved,
-          convocation: convocation
-        } )
         return res.status(201).json({
-          users: users,
+          spectators: spectators,
           reserved: reserved,
           convocation: convocation
         }); 

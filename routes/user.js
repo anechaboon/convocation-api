@@ -3,6 +3,9 @@ const User = require('../models/User');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // กำหนดระดับความซับซ้อนของ salt
+const jwt = require('jsonwebtoken');
+
+const secretKey = process.env.SECRET_KEY; 
 
 router.get('/', async (req, res) => {
   try {
@@ -65,6 +68,7 @@ router.put('/:id', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
+
       // ดึงข้อมูลผู้ใช้จากฐานข้อมูล (ตัวอย่าง)
       const user = await User.findOne({ email: req.body.email});
 
@@ -78,8 +82,12 @@ router.post('/login', async (req, res) => {
       const match = await bcrypt.compare(req.body.password, user.password);
 
       if (match) {
+        const token = jwt.sign({ email: user.email }, secretKey, { expiresIn: '1h' });
+        res.json({ token });
+
         return res.status(200).json({
-          message: "login success"
+          message: "login success",
+          data: token
         }); 
       } else {
         return res.status(401).json({
@@ -91,7 +99,6 @@ router.post('/login', async (req, res) => {
       console.error('Error during login:', err);
   }
 });
-
 
 
 
