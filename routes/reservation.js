@@ -1,6 +1,6 @@
 const express = require('express');
 const Reserved = require('../models/Reserved');
-const User = require('../models/User');
+const User = require('../models/Spectator');
 const Convocation = require('../models/Convocation');
 
 

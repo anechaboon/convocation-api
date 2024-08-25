@@ -20,9 +20,11 @@ mongoose.connect(mongoURI)
 
 // Import routes
 const userRoutes = require('./routes/user');
+const spectatorRoutes = require('./routes/spectator');
 const convocationRoutes = require('./routes/convocation');
 const reservationRoutes = require('./routes/reservation');
-app.use('/users', userRoutes);
+app.use('/user', userRoutes);
+app.use('/spectator', spectatorRoutes);
 app.use('/convocation', convocationRoutes);
 app.use('/reservation', reservationRoutes);
 
