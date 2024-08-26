@@ -35,7 +35,6 @@ router.post('/register', async (req, res) => {
     const convocation = await Convocation.findOne({ status: 1 });
     if(convocation.registerAvailable){
       const spectator = await Spectator.findOne({ phoneNumber: req.body.phoneNumber, status: 1 });
-      console.log(`🚀 log:findOne.spectator`,spectator )
       if(!spectator){
         const spectator = new Spectator({
           firstName: req.body.firstName,

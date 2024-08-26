@@ -5,7 +5,7 @@ const Convocation = require('../models/Convocation');
 
 const router = express.Router();
 const secretKey = process.env.SECRET_KEY; 
-const authenticateToken = require('./authMiddleware'); // นำเข้า authenticateToken
+const authenticateToken = require('./auth_middleware'); // นำเข้า authenticateToken
 
 router.get('/', async (req, res) => {
   try {
