@@ -23,47 +23,55 @@ router.get('/', async (req, res) => {
 
 router.post('/', authenticateToken, async (req, res) => {
   try {
-    const reserved = new Reserved({
+    
+    const convocation = await Convocation.findOne({ status: 1 });
+    if(convocation && convocation.seatAvailable > 0){
+      const reserved = new Reserved({
         // date: req.body.date,
         reservedID: req.body.reservedID,
         seatNumber: req.body.seatNumber,
         status: req.body.status
-    });
+      });
 
-    const newReserved = await reserved.save();
-    if(newReserved){
-        await Convocation.updateOne(
-          { 
-            status: 1,
-            // date: req.body.date,
-          },
-          {
-            $inc: { 
-              seatAvailable: -1,       
-            }
-          },
-        );
+      const newReserved = await reserved.save();
+      if(newReserved){
+          await Convocation.updateOne(
+            { 
+              status: 1,
+              // date: req.body.date,
+            },
+            {
+              $inc: { 
+                seatAvailable: -1,       
+              }
+            },
+          );
 
-        const updatedSpectator = await Spectator.findByIdAndUpdate(
-            req.body.reservedID,         
-            { reservedSeat: true},     
-        );
-    
-        if (!updatedSpectator) {
-          return res.status(404).json({ message: 'Spectator not found' });
-        }
+          const updatedSpectator = await Spectator.findByIdAndUpdate(
+              req.body.reservedID,         
+              { reservedSeat: true},     
+          );
+      
+          if (!updatedSpectator) {
+            return res.status(404).json({ message: 'Spectator not found' });
+          }
 
- 
-
-        const [spectators, reserved, convocation] = await Promise.all([ Spectator.find({ status: 1 }), Reserved.find({ status: 1 }), Convocation.findOne({ status: 1 })]);
-        
-        return res.status(201).json({
-          spectators: spectators,
-          reserved: reserved,
-          convocation: convocation
-        }); 
+          const [spectators, reserved, convocation] = await Promise.all([ Spectator.find({ status: 1 }), Reserved.find({ status: 1 }), Convocation.findOne({ status: 1 })]);
+          
+          return res.status(201).json({
+            spectators: spectators,
+            reserved: reserved,
+            convocation: convocation
+          }); 
+      }
+      return res.status(200).json({
+        message: "Reserve Failed"
+      }); 
+    } else {
+      res.status(200).json({ message: "Fully Reserved" });
     }
-    return res.status(200).json(newReserved); 
+
+   
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
