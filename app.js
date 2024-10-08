@@ -23,13 +23,16 @@ const userRoutes = require('./routes/user');
 const spectatorRoutes = require('./routes/spectator');
 const convocationRoutes = require('./routes/convocation');
 const reservationRoutes = require('./routes/reservation');
-app.use('/user', userRoutes);
-app.use('/spectator', spectatorRoutes);
-app.use('/convocation', convocationRoutes);
-app.use('/reservation', reservationRoutes);
+
+app.use('/api/user', userRoutes);
+app.use('/api/spectator', spectatorRoutes);
+app.use('/api/convocation', convocationRoutes);
+app.use('/api/reservation', reservationRoutes);
 
 // เริ่มเซิร์ฟเวอร์
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+module.exports = app

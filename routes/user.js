@@ -30,7 +30,11 @@ router.post('/', async (req, res) => {
       });
 
       const newUser = await user.save();
-      return res.status(200).json(newUser); 
+
+      return res.status(201).json({
+        message: 'User created successfully',
+        user: newUser
+      });
 
     }
 
